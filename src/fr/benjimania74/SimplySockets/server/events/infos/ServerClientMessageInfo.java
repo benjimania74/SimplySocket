@@ -1,20 +1,18 @@
 package fr.benjimania74.SimplySockets.server.events.infos;
 
+import fr.benjimania74.SimplySockets.server.ClientManager;
 import fr.benjimania74.SimplySockets.server.events.EventInfo;
 
 public class ServerClientMessageInfo extends EventInfo {
-    private final int port;
-    private final String clientIP;
+    private final ClientManager clientManager;
     private final String message;
 
-    public ServerClientMessageInfo(int port, String clientIP, String message){
+    public ServerClientMessageInfo(ClientManager clientManager, String message){
         setName("ClientMessageInfo");
-        this.port = port;
-        this.clientIP = clientIP;
+        this.clientManager = clientManager;
         this.message = message;
     }
 
-    public int getPort() {return port;}
-    public String getClientIP() {return clientIP;}
+    public ClientManager getClientManager() {return clientManager;}
     public String getMessage() {return message;}
 }

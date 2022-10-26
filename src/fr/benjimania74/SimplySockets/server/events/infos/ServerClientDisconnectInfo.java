@@ -1,17 +1,15 @@
 package fr.benjimania74.SimplySockets.server.events.infos;
 
+import fr.benjimania74.SimplySockets.server.ClientManager;
 import fr.benjimania74.SimplySockets.server.events.EventInfo;
 
 public class ServerClientDisconnectInfo extends EventInfo {
-    private final int port;
-    private final String clientIP;
+    private final ClientManager clientManager;
 
-    public ServerClientDisconnectInfo(int port, String clientIP){
+    public ServerClientDisconnectInfo(ClientManager clientManager){
         setName("ClientDisconnectInfo");
-        this.port = port;
-        this.clientIP = clientIP;
+        this.clientManager = clientManager;
     }
 
-    public int getPort() {return port;}
-    public String getIp() {return clientIP;}
+    public ClientManager getClientManager() {return clientManager;}
 }

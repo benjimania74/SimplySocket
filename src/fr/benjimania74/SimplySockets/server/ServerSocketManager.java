@@ -8,6 +8,7 @@ import fr.benjimania74.SimplySockets.server.events.infos.ServerSocketStopInfo;
 
 import java.io.IOException;
 import java.net.ServerSocket;
+import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -23,6 +24,7 @@ public class ServerSocketManager {
         try{
             this.socket = new ServerSocket(this.port);
             callEvents(EventType.START, new ServerSocketStartInfo(this.port));
+            new ClientWaiter(this);
         }catch (IOException e){
             e.printStackTrace();
         }
@@ -35,6 +37,19 @@ public class ServerSocketManager {
         }catch (Exception e){
             e.printStackTrace();
             callEvents(EventType.STOP, new ServerSocketStopInfo(this.port, "Crash while manual stopping"));
+        }
+    }
+
+    public boolean isStarted(){
+        return !this.socket.isClosed();
+    }
+
+    public Socket acceptClient(){
+        try {
+            return this.socket.accept();
+        }catch (Exception e){
+            e.printStackTrace();
+            return null;
         }
     }
 
