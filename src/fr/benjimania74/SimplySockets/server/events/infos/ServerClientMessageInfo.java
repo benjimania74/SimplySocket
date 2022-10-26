@@ -1,9 +1,9 @@
 package fr.benjimania74.SimplySockets.server.events.infos;
 
 import fr.benjimania74.SimplySockets.server.ClientManager;
-import fr.benjimania74.SimplySockets.server.events.EventInfo;
+import fr.benjimania74.SimplySockets.server.events.ServerEventInfo;
 
-public class ServerClientMessageInfo extends EventInfo {
+public class ServerClientMessageInfo extends ServerEventInfo {
     private final ClientManager clientManager;
     private final String message;
 

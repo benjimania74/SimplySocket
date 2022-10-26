@@ -1,6 +1,6 @@
 package fr.benjimania74.SimplySockets.server.events;
 
-public enum EventType {
+public enum ServerEventType {
     START,
     CLIENT_CONNECT,
     CLIENT_MESSAGE,

@@ -1,6 +1,6 @@
 package fr.benjimania74.SimplySockets.server;
 
-import fr.benjimania74.SimplySockets.server.events.EventType;
+import fr.benjimania74.SimplySockets.server.events.ServerEventType;
 import fr.benjimania74.SimplySockets.server.events.infos.ServerClientMessageInfo;
 
 import java.io.DataInputStream;
@@ -33,7 +33,7 @@ public class ClientManager implements Runnable{
         try{
             if(isConnected()){
                 DataInputStream dis = new DataInputStream(this.client.getInputStream());
-                this.ssm.callEvents(EventType.CLIENT_MESSAGE, new ServerClientMessageInfo(this, dis.readUTF()));
+                this.ssm.callEvents(ServerEventType.CLIENT_MESSAGE, new ServerClientMessageInfo(this, dis.readUTF()));
                 run();
             }
             this.client.close();

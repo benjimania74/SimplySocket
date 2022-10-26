@@ -1,8 +1,8 @@
 package fr.benjimania74.SimplySockets.server;
 
-import fr.benjimania74.SimplySockets.server.events.Event;
-import fr.benjimania74.SimplySockets.server.events.EventInfo;
-import fr.benjimania74.SimplySockets.server.events.EventType;
+import fr.benjimania74.SimplySockets.server.events.ServerEvent;
+import fr.benjimania74.SimplySockets.server.events.ServerEventInfo;
+import fr.benjimania74.SimplySockets.server.events.ServerEventType;
 import fr.benjimania74.SimplySockets.server.events.infos.ServerSocketStartInfo;
 import fr.benjimania74.SimplySockets.server.events.infos.ServerSocketStopInfo;
 
@@ -14,16 +14,19 @@ import java.util.Arrays;
 import java.util.List;
 
 public class ServerSocketManager {
-    private ServerSocket socket;
+    private ServerSocket socket = null;
     private final int port;
-    private List<Event> events = new ArrayList<>();
+    private List<ServerEvent> serverEvents = new ArrayList<>();
 
     public ServerSocketManager(int port){this.port = port;}
 
     public void start(){
         try{
+            if(this.socket != null && !this.socket.isClosed()){
+                stop();
+            }
             this.socket = new ServerSocket(this.port);
-            callEvents(EventType.START, new ServerSocketStartInfo(this.port));
+            callEvents(ServerEventType.START, new ServerSocketStartInfo(this.port));
             new Thread(new ClientWaiter(this)).start();
         }catch (IOException e){
             e.printStackTrace();
@@ -32,11 +35,12 @@ public class ServerSocketManager {
 
     public void stop(){
         try {
+            if(this.socket.isClosed()){return;}
             this.socket.close();
-            callEvents(EventType.STOP, new ServerSocketStopInfo(this.port, "Manual Stopping"));
+            callEvents(ServerEventType.STOP, new ServerSocketStopInfo(this.port, "Manual Stopping"));
         }catch (Exception e){
             e.printStackTrace();
-            callEvents(EventType.STOP, new ServerSocketStopInfo(this.port, "Crash while manual stopping"));
+            callEvents(ServerEventType.STOP, new ServerSocketStopInfo(this.port, "Crash while manual stopping"));
         }
     }
 
@@ -53,14 +57,14 @@ public class ServerSocketManager {
         }
     }
 
-    public void registerEvents(Event ... e){
-        this.events.addAll(Arrays.asList(e));
+    public void registerEvents(ServerEvent... e){
+        this.serverEvents.addAll(Arrays.asList(e));
     }
 
-    protected void callEvents(EventType event, EventInfo eventInfo){
-        events.forEach(e -> {
+    protected void callEvents(ServerEventType event, ServerEventInfo serverEventInfo){
+        serverEvents.forEach(e -> {
             if(e.getType() == event){
-                e.call(eventInfo);
+                e.call(serverEventInfo);
             }
         });
     }
