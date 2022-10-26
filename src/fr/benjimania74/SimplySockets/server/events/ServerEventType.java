@@ -5,6 +5,7 @@ public enum ServerEventType {
     CLIENT_CONNECT,
     CLIENT_MESSAGE,
     CLIENT_DISCONNECT,
+    SERVER_MESSAGE,
     STOP,
     NONE
 }

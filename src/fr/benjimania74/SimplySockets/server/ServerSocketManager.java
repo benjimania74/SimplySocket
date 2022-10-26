@@ -14,6 +14,7 @@ import java.util.Arrays;
 import java.util.List;
 
 public class ServerSocketManager {
+    private ClientWaiter cw;
     private ServerSocket socket = null;
     private final int port;
     private List<ServerEvent> serverEvents = new ArrayList<>();
@@ -27,7 +28,8 @@ public class ServerSocketManager {
             }
             this.socket = new ServerSocket(this.port);
             callEvents(ServerEventType.START, new ServerSocketStartInfo(this.port));
-            new Thread(new ClientWaiter(this)).start();
+            this.cw = new ClientWaiter(this);
+            new Thread(this.cw).start();
         }catch (IOException e){
             e.printStackTrace();
         }
@@ -36,8 +38,9 @@ public class ServerSocketManager {
     public void stop(){
         try {
             if(this.socket.isClosed()){return;}
-            this.socket.close();
+            this.cw.disconnectAll();
             callEvents(ServerEventType.STOP, new ServerSocketStopInfo(this.port, "Manual Stopping"));
+            this.socket.close();
         }catch (Exception e){
             e.printStackTrace();
             callEvents(ServerEventType.STOP, new ServerSocketStopInfo(this.port, "Crash while manual stopping"));
@@ -51,8 +54,7 @@ public class ServerSocketManager {
     public Socket acceptClient(){
         try {
             return this.socket.accept();
-        }catch (Exception e){
-            e.printStackTrace();
+        }catch (IOException e){
             return null;
         }
     }

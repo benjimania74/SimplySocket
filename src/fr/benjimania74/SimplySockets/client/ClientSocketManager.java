@@ -5,7 +5,9 @@ import fr.benjimania74.SimplySockets.client.events.ClientEventInfo;
 import fr.benjimania74.SimplySockets.client.events.ClientEventType;
 import fr.benjimania74.SimplySockets.client.events.infos.ClientConnectInfo;
 import fr.benjimania74.SimplySockets.client.events.infos.ClientDisconnectInfo;
+import fr.benjimania74.SimplySockets.client.events.infos.ClientSendMessageInfo;
 
+import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
 import java.util.ArrayList;
@@ -16,7 +18,10 @@ public class ClientSocketManager {
     private List<ClientEvent> clientEvents = new ArrayList<>();
     private Socket client = null;
     private final String ip;
+    public String getIp() {return ip;}
+
     private final int port;
+    public int getPort() {return port;}
 
     public ClientSocketManager(String ip, int port){
         this.ip = ip;
@@ -55,5 +60,19 @@ public class ClientSocketManager {
                 e.call(clientEventInfo);
             }
         });
+    }
+
+    public boolean sendMessage(String message){
+        try{
+            if(!this.client.isConnected()){return false;}
+            DataOutputStream out = new DataOutputStream(this.client.getOutputStream());
+            out.writeUTF(message);
+            out.flush();
+            callEvents(ClientEventType.SEND_MESSAGE, new ClientSendMessageInfo(this.ip, this.port, message));
+            return true;
+        }catch (IOException e){
+            e.printStackTrace();
+            return false;
+        }
     }
 }
