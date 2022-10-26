@@ -5,5 +5,5 @@ public abstract class Event {
     public EventType getType(){return this.type;};
     public void setType(EventType type){this.type = type;};
 
-    public abstract void call();
+    public abstract void call(EventInfo eventInfo);
 }
