@@ -24,7 +24,7 @@ public class ServerSocketManager {
         try{
             this.socket = new ServerSocket(this.port);
             callEvents(EventType.START, new ServerSocketStartInfo(this.port));
-            new ClientWaiter(this);
+            new Thread(new ClientWaiter(this)).start();
         }catch (IOException e){
             e.printStackTrace();
         }

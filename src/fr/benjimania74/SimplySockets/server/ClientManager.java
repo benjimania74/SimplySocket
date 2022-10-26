@@ -1,14 +1,19 @@
 package fr.benjimania74.SimplySockets.server;
 
+import fr.benjimania74.SimplySockets.server.events.EventType;
+import fr.benjimania74.SimplySockets.server.events.infos.ServerClientMessageInfo;
+
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.net.Socket;
 
-public class ClientManager {
+public class ClientManager implements Runnable{
     private final Socket client;
+    private final ServerSocketManager ssm;
 
-    public ClientManager(Socket client){
+    public ClientManager(Socket client, ServerSocketManager ssm){
         this.client = client;
+        this.ssm = ssm;
     }
 
     public String getIP(){
@@ -23,16 +28,17 @@ public class ClientManager {
         return client.isConnected();
     }
 
-    public String readData(){
+    @Override
+    public void run() {
         try{
             if(isConnected()){
-                    DataInputStream dis = new DataInputStream(this.client.getInputStream());
-                    return dis.readUTF();
+                DataInputStream dis = new DataInputStream(this.client.getInputStream());
+                this.ssm.callEvents(EventType.CLIENT_MESSAGE, new ServerClientMessageInfo(this, dis.readUTF()));
+                run();
             }
             this.client.close();
         }catch (IOException e){
             e.printStackTrace();
         }
-        return "";
     }
 }
